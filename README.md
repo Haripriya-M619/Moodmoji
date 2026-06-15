@@ -63,6 +63,14 @@ Enter your Anthropic API key in the app (get one at [console.anthropic.com](http
 
 ---
 
+## Screenshot
+
+<img width="1919" height="880" alt="Screenshot 2026-06-15 221529" src="https://github.com/user-attachments/assets/ad2b9100-48cc-4b7e-9942-4b7183d28817" />
+
+<img width="1886" height="894" alt="Screenshot 2026-06-15 223121" src="https://github.com/user-attachments/assets/5b791001-6b45-4770-bad3-bae487e134f4" />
+
+
+
 ## Project structure
 
 ```
