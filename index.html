@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MoodMoji — Your Face, Your Emoji</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0a0a0f;
+      --surface:  #13131a;
+      --border:   #1e1e2e;
+      --text:     #e8e8f0;
+      --muted:    #6b6b80;
+      --happy:    #f9c846;
+      --sad:      #5ba4f5;
+      --neutral:  #a78bfa;
+      --angry:    #f97316;
+      --bored:    #34d399;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2.5rem;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 1.3rem; letter-spacing: -0.03em; }
+    .logo span { color: var(--happy); }
+    nav a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color .2s;
+    }
+    nav a:hover { color: var(--text); }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-cta {
+      background: var(--happy); color: #0a0a0f !important;
+      padding: .45rem 1.1rem; border-radius: 6px;
+      font-weight: 600; font-size: 0.85rem !important;
+      transition: opacity .2s !important;
+    }
+    .nav-cta:hover { opacity: .85; color: #0a0a0f !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 8rem 1.5rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 0%, rgba(249,200,70,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(91,164,245,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 80% 70%, rgba(167,139,250,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 100px; padding: .35rem 1rem;
+      font-size: .8rem; color: var(--muted);
+      margin-bottom: 1.8rem;
+      animation: fadeUp .6s ease both;
+    }
+    .hero-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--happy); }
+
+    .hero h1 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.04em;
+      margin-bottom: 1.2rem;
+      animation: fadeUp .6s .1s ease both;
+    }
+    .hero h1 em { font-style: normal; color: var(--happy); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 2.5rem;
+      animation: fadeUp .6s .2s ease both;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      background: var(--happy); color: #0a0a0f;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700; font-size: 1rem;
+      padding: .85rem 2rem; border-radius: 8px;
+      text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 0 30px rgba(249,200,70,0.25);
+      animation: fadeUp .6s .3s ease both;
+    }
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 50px rgba(249,200,70,0.4);
+    }
+
+    /* floating emoji strip */
+    .emoji-strip {
+      margin-top: 4rem;
+      display: flex; gap: 1.2rem;
+      animation: fadeUp .6s .4s ease both;
+    }
+    .emoji-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: .6rem 1rem;
+      font-size: 1.6rem;
+      display: flex; align-items: center; gap: .5rem;
+      transition: transform .3s, border-color .3s;
+    }
+    .emoji-chip span { font-family: 'Inter', sans-serif; font-size: .75rem; color: var(--muted); }
+    .emoji-chip:hover { transform: translateY(-4px); }
+    .emoji-chip.h { border-color: var(--happy); }
+    .emoji-chip.s { border-color: var(--sad); }
+    .emoji-chip.n { border-color: var(--neutral); }
+    .emoji-chip.a { border-color: var(--angry); }
+    .emoji-chip.b { border-color: var(--bored); }
+
+    /* ── HOW IT WORKS ── */
+    .section {
+      padding: 6rem 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: .75rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--happy);
+      margin-bottom: 1rem;
+    }
+    .section h2 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800; letter-spacing: -0.03em;
+      margin-bottom: 3rem;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.8rem;
+      position: relative;
+      transition: border-color .3s, transform .3s;
+    }
+    .step:hover { border-color: var(--happy); transform: translateY(-3px); }
+    .step-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .step h3 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.05rem; font-weight: 700;
+      margin-bottom: .4rem;
+    }
+    .step p { font-size: .88rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── MOODS ── */
+    .moods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+    .mood-card {
+      border-radius: 14px;
+      padding: 1.8rem 1.2rem;
+      text-align: center;
+      border: 1px solid transparent;
+      transition: transform .3s;
+    }
+    .mood-card:hover { transform: scale(1.04); }
+    .mood-card .big-emoji { font-size: 3.5rem; display: block; margin-bottom: .8rem; }
+    .mood-card h3 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: .95rem; font-weight: 700; margin-bottom: .3rem;
+    }
+    .mood-card p { font-size: .78rem; color: var(--muted); }
+    .mood-card.happy  { background: rgba(249,200,70,0.07);  border-color: rgba(249,200,70,0.2);  }
+    .mood-card.sad    { background: rgba(91,164,245,0.07);  border-color: rgba(91,164,245,0.2);  }
+    .mood-card.neutral{ background: rgba(167,139,250,0.07); border-color: rgba(167,139,250,0.2); }
+    .mood-card.angry  { background: rgba(249,115,22,0.07);  border-color: rgba(249,115,22,0.2);  }
+    .mood-card.bored  { background: rgba(52,211,153,0.07);  border-color: rgba(52,211,153,0.2);  }
+
+    /* ── TECH ── */
+    .tech-row {
+      display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.5rem;
+    }
+    .tech-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: .4rem 1rem;
+      font-size: .82rem; color: var(--muted);
+    }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      margin: 0 1.5rem 6rem;
+      max-width: 1000px;
+      margin-left: auto; margin-right: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4rem 2rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(249,200,70,0.07) 0%, transparent 70%);
+    }
+    .cta-banner h2 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800; letter-spacing: -0.03em;
+      margin-bottom: .8rem;
+      position: relative;
+    }
+    .cta-banner p { color: var(--muted); margin-bottom: 2rem; position: relative; }
+    .cta-banner a {
+      background: var(--happy); color: #0a0a0f;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700; font-size: 1rem;
+      padding: .85rem 2.2rem; border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform .2s;
+      position: relative;
+    }
+    .cta-banner a:hover { transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      color: var(--muted); font-size: .82rem;
+      flex-wrap: wrap; gap: 1rem;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .emoji-strip { flex-wrap: wrap; justify-content: center; }
+      nav .nav-links { gap: 1rem; }
+      .nav-links a:not(.nav-cta) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Mood<span>Moji</span></div>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#moods">Moods</a>
+    <a href="app.html" class="nav-cta">Try it free →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="dot"></span>
+    Powered by Claude Vision AI
+  </div>
+  <h1>Your face.<br><em>One emoji.</em></h1>
+  <p class="hero-sub">Upload a photo or snap a selfie — MoodMoji reads your expression and finds the emoji that's so you right now.</p>
+  <a href="app.html" class="hero-cta">Find my emoji →</a>
+
+  <div class="emoji-strip">
+    <div class="emoji-chip h">😄 <span>Happy</span></div>
+    <div class="emoji-chip s">😢 <span>Sad</span></div>
+    <div class="emoji-chip n">😐 <span>Neutral</span></div>
+    <div class="emoji-chip a">😠 <span>Angry</span></div>
+    <div class="emoji-chip b">🥱 <span>Bored</span></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <p class="section-label">How it works</p>
+  <h2>Three steps to your emoji</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-icon">📸</div>
+      <h3>Upload or snap</h3>
+      <p>Drop any photo or use your camera directly in the browser. No app needed.</p>
+    </div>
+    <div class="step">
+      <div class="step-icon">🤖</div>
+      <h3>AI reads your face</h3>
+      <p>Claude Vision scans your expression and picks the one emoji that nails your mood.</p>
+    </div>
+    <div class="step">
+      <div class="step-icon">✨</div>
+      <h3>Emoji takes over</h3>
+      <p>Your emoji fills the whole screen with a message that gets exactly how you're feeling.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MOODS -->
+<section class="section" id="moods">
+  <p class="section-label">5 moods</p>
+  <h2>Which one are you today?</h2>
+  <div class="moods-grid">
+    <div class="mood-card happy">
+      <span class="big-emoji">😄</span>
+      <h3>Happy</h3>
+      <p>That glow? Unmistakable.</p>
+    </div>
+    <div class="mood-card sad">
+      <span class="big-emoji">😢</span>
+      <h3>Sad</h3>
+      <p>Aw, it's okay. We see you.</p>
+    </div>
+    <div class="mood-card neutral">
+      <span class="big-emoji">😐</span>
+      <h3>Neutral</h3>
+      <p>Feeling… precisely nothing.</p>
+    </div>
+    <div class="mood-card angry">
+      <span class="big-emoji">😠</span>
+      <h3>Angry</h3>
+      <p>Deep breath. Let it out.</p>
+    </div>
+    <div class="mood-card bored">
+      <span class="big-emoji">🥱</span>
+      <h3>Bored</h3>
+      <p>Same. Honestly, same.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="section">
+  <p class="section-label">Built with</p>
+  <h2>Clean tech, zero fluff</h2>
+  <div class="tech-row">
+    <span class="tech-pill">Claude claude-sonnet-4-6 Vision API</span>
+    <span class="tech-pill">MediaDevices API</span>
+    <span class="tech-pill">Vanilla JS</span>
+    <span class="tech-pill">HTML5 Canvas</span>
+    <span class="tech-pill">Zero dependencies</span>
+    <span class="tech-pill">GitHub Pages</span>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <h2>Ready to meet your emoji?</h2>
+  <p>No sign-up. No downloads. Just your face and one perfect emoji.</p>
+  <a href="app.html">Try MoodMoji →</a>
+</div>
+
+<footer>
+  <div class="logo" style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;">Mood<span style="color:var(--happy)">Moji</span></div>
+  <span>Built with Claude Vision AI · <a href="https://github.com/yourusername/moodmoji" style="color:var(--muted)">GitHub</a></span>
+</footer>
+
+</body>
+</html>
